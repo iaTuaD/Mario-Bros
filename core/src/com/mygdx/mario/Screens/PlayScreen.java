@@ -26,6 +26,7 @@ import com.mygdx.mario.MarioBros;
 import com.mygdx.mario.Scenes.Hud;
 import com.mygdx.mario.Sprites.Mario;
 import com.mygdx.mario.Tools.B2WorldCreator;
+import com.mygdx.mario.Tools.WorldContactListener;
 
 public class PlayScreen implements Screen {
     private MarioBros game;
@@ -57,6 +58,8 @@ public class PlayScreen implements Screen {
 
         new B2WorldCreator(world,  map);
         player = new Mario(world, this);
+
+        world.setContactListener(new WorldContactListener());
     }
 
     public TextureAtlas getAtlas(){
@@ -94,10 +97,10 @@ public class PlayScreen implements Screen {
         if (Gdx.input.isTouched()) {
             if (Gdx.input.getX() < Gdx.graphics.getWidth() / 2 && Gdx.input.getY() >= Gdx.graphics.getHeight() / 2) {
                 //left
-                player.b2Body.applyLinearImpulse(new Vector2(-0.5f, 0), player.b2Body.getWorldCenter(), true);
+                player.b2Body.applyLinearImpulse(new Vector2(-0.1f, 0), player.b2Body.getWorldCenter(), true);
             } else if (Gdx.input.getX() >= Gdx.graphics.getWidth() / 2 && Gdx.input.getY() >= Gdx.graphics.getHeight() / 2) {
                 //right
-                player.b2Body.applyLinearImpulse(new Vector2(0.5f, 0), player.b2Body.getWorldCenter(), true);
+                player.b2Body.applyLinearImpulse(new Vector2(0.1f, 0), player.b2Body.getWorldCenter(), true);
             }
             if (Gdx.input.getY() < Gdx.graphics.getHeight() / 2) {
                 // above

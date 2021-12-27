@@ -1,18 +1,23 @@
 package com.mygdx.mario.Sprites;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
+import com.badlogic.gdx.physics.box2d.EdgeShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.mario.MarioBros;
 import com.mygdx.mario.Screens.PlayScreen;
 import com.sun.tools.javac.code.Attribute;
+
+import jdk.internal.jline.internal.Log;
 
 public class Mario extends Sprite {
     public enum State {FALLING, JUMPING, STANDING, RUNNING}
@@ -25,7 +30,8 @@ public class Mario extends Sprite {
     private TextureRegion marioStand;
 
     private Animation<TextureRegion> marioRun;
-    private Animation<TextureRegion> marioJump;
+    //    private Animation<TextureRegion> marioJump;
+    private TextureRegion marioJump;
     private boolean runningRight;
     private float stateTimer;
 
@@ -39,17 +45,23 @@ public class Mario extends Sprite {
         runningRight = true;
 
         com.badlogic.gdx.utils.Array<TextureRegion> frames = new Array<TextureRegion>();
-        for (int i = 0; i < 4; i++) {
-            frames.add(new TextureRegion(getTexture(), i * 16, 0, 16, 16));
-        }
+//        for (int i = 0; i < 4; i++) {
+//            frames.add(new TextureRegion(getTexture(), i * 16, 0, 16, 16));
+//        }
+//        marioRun = new Animation<TextureRegion>(0.1f, frames);
+//        frames.clear();
+        for (int i = 1; i < 4; i++)
+            frames.add(new TextureRegion(screen.getAtlas().findRegion("little_mario"), i * 16, 0, 16, 16));
         marioRun = new Animation<TextureRegion>(0.1f, frames);
         frames.clear();
 
-        for (int i = 4; i < 6; i++) {
-            frames.add(new TextureRegion(getTexture(), i * 16, 0, 16, 16));
-        }
-        marioJump = new Animation<TextureRegion>(0.1f, frames);
-        frames.clear();
+//        for (int i = 4; i < 6; i++) {
+//            frames.add(new TextureRegion(getTexture(), i * 16, 0, 16, 16));
+//        }
+//        marioJump = new Animation<TextureRegion>(0.1f, frames);
+//        frames.clear();
+
+        marioJump = new TextureRegion(screen.getAtlas().findRegion("little_mario"), 80, 0, 16, 16);
 
         marioStand = new TextureRegion(getTexture(), 1, 11, 16, 16);
         defineMario();
@@ -68,7 +80,8 @@ public class Mario extends Sprite {
         TextureRegion region;
         switch (currentState) {
             case JUMPING:
-                region = marioJump.getKeyFrame(stateTimer);
+//                region = marioJump.getKeyFrame(stateTimer);
+                region = marioJump;
                 break;
             case RUNNING:
                 region = marioRun.getKeyFrame(stateTimer, true);
@@ -114,7 +127,17 @@ public class Mario extends Sprite {
         FixtureDef fDef = new FixtureDef();
         CircleShape shape = new CircleShape();
         shape.setRadius(6 / MarioBros.PPM);
+        fDef.filter.categoryBits = MarioBros.MARIO_BIT;
+        fDef.filter.maskBits = MarioBros.DEFAULT_BIT | MarioBros.COIN_BIT | MarioBros.BRICK_BIT;
+
         fDef.shape = shape;
         b2Body.createFixture(fDef);
+
+        EdgeShape head = new EdgeShape();
+        head.set(new Vector2(-2 / MarioBros.PPM, 6 / MarioBros.PPM),
+                new Vector2(2 / MarioBros.PPM, 6 / MarioBros.PPM));
+        fDef.shape = head;
+        fDef.isSensor = true;
+        b2Body.createFixture(fDef).setUserData("head");
     }
 }
