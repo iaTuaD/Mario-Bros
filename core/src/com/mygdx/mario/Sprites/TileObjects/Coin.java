@@ -1,23 +1,22 @@
-package com.mygdx.mario.Sprites;
+package com.mygdx.mario.Sprites.TileObjects;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.math.Vector2;
 import com.mygdx.mario.MarioBros;
 import com.mygdx.mario.Scenes.Hud;
+import com.mygdx.mario.Screens.PlayScreen;
+import com.mygdx.mario.Sprites.Items.ItemDef;
+import com.mygdx.mario.Sprites.Items.Mushroom;
 
 public class Coin extends InteractiveTileObject {
     private static TiledMapTileSet tileSet;
     private final int BLACNK_COIN = 28;
 
-    public Coin(World world, TiledMap map, Rectangle bounds) {
-        super(world, map, bounds);
+    public Coin(PlayScreen screen, Rectangle bounds) {
+        super(screen, bounds);
         tileSet = map.getTileSets().getTileSet("tileset_gutter");
         fixture.setUserData(this);
         setCategoryFilter(MarioBros.COIN_BIT);
@@ -26,9 +25,11 @@ public class Coin extends InteractiveTileObject {
     @Override
     public void onHeadHit() {
         Gdx.app.debug("tai", "coll coin");
-        if (getCell().getTile().getId() == BLACNK_COIN){
+        if (getCell().getTile().getId() == BLACNK_COIN) {
             MarioBros.manager.get("audio/sounds/bump.wav", Sound.class).play();
-        }else {
+        } else {
+            screen.spawnItem(new ItemDef(new Vector2(body.getPosition().x, body.getPosition().y + 16 / MarioBros.PPM),
+                    Mushroom.class));
             MarioBros.manager.get("audio/sounds/coin.wav", Sound.class).play();
         }
         getCell().setTile(tileSet.getTile(BLACNK_COIN));
