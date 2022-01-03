@@ -101,7 +101,7 @@ public class PlayScreen implements Screen {
     }
 
     public void update(float dt) {
-        handInput(dt);
+        handleInput(dt);
         handleSpawningItems();
         world.step(1 / 60f, 6, 2);
 
@@ -119,38 +119,43 @@ public class PlayScreen implements Screen {
 
         hud.update(dt);
 
-        gameCam.position.x = player.b2Body.getPosition().x;
+        if (player.currentState != Mario.State.DEAD) {
+            gameCam.position.x = player.b2Body.getPosition().x;
+        }
         gameCam.update();
         renderer.setView(gameCam);
     }
 
-    private void handInput(float dt) {
-        if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
-            Gdx.app.debug("tai", "press");
-            player.b2Body.applyLinearImpulse(new Vector2(0, 4f), player.b2Body.getWorldCenter(), true);
-        }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT) && player.b2Body.getLinearVelocity().x <= 2) {
-            Gdx.app.debug("tai", "press");
-            player.b2Body.applyLinearImpulse(new Vector2(0.5f, 0), player.b2Body.getWorldCenter(), true);
-        }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT) && player.b2Body.getLinearVelocity().x >= -2) {
-            Gdx.app.debug("tai", "press");
-            player.b2Body.applyLinearImpulse(new Vector2(-0.5f, 0), player.b2Body.getWorldCenter(), true);
+    private void handleInput(float dt) {
+        if (player.currentState != Mario.State.DEAD) {
+            if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
+                Gdx.app.debug("tai", "press");
+                player.b2Body.applyLinearImpulse(new Vector2(0, 4f), player.b2Body.getWorldCenter(), true);
+            }
+            if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT) && player.b2Body.getLinearVelocity().x <= 2) {
+                Gdx.app.debug("tai", "press");
+                player.b2Body.applyLinearImpulse(new Vector2(0.5f, 0), player.b2Body.getWorldCenter(), true);
+            }
+            if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT) && player.b2Body.getLinearVelocity().x >= -2) {
+                Gdx.app.debug("tai", "press");
+                player.b2Body.applyLinearImpulse(new Vector2(-0.5f, 0), player.b2Body.getWorldCenter(), true);
+            }
+
+            if (Gdx.input.isTouched()) {
+                if (Gdx.input.getX() < Gdx.graphics.getWidth() / 2 && Gdx.input.getY() >= Gdx.graphics.getHeight() / 2) {
+                    //left
+                    player.b2Body.applyLinearImpulse(new Vector2(-0.1f, 0), player.b2Body.getWorldCenter(), true);
+                } else if (Gdx.input.getX() >= Gdx.graphics.getWidth() / 2 && Gdx.input.getY() >= Gdx.graphics.getHeight() / 2) {
+                    //right
+                    player.b2Body.applyLinearImpulse(new Vector2(0.1f, 0), player.b2Body.getWorldCenter(), true);
+                }
+                if (Gdx.input.getY() < Gdx.graphics.getHeight() / 2) {
+                    // above
+                    player.b2Body.applyLinearImpulse(new Vector2(0, 0.5f), player.b2Body.getWorldCenter(), true);
+                }
+            }
         }
 
-        if (Gdx.input.isTouched()) {
-            if (Gdx.input.getX() < Gdx.graphics.getWidth() / 2 && Gdx.input.getY() >= Gdx.graphics.getHeight() / 2) {
-                //left
-                player.b2Body.applyLinearImpulse(new Vector2(-0.1f, 0), player.b2Body.getWorldCenter(), true);
-            } else if (Gdx.input.getX() >= Gdx.graphics.getWidth() / 2 && Gdx.input.getY() >= Gdx.graphics.getHeight() / 2) {
-                //right
-                player.b2Body.applyLinearImpulse(new Vector2(0.1f, 0), player.b2Body.getWorldCenter(), true);
-            }
-            if (Gdx.input.getY() < Gdx.graphics.getHeight() / 2) {
-                // above
-                player.b2Body.applyLinearImpulse(new Vector2(0, 0.5f), player.b2Body.getWorldCenter(), true);
-            }
-        }
     }
 
     @Override
@@ -175,6 +180,11 @@ public class PlayScreen implements Screen {
         game.batch.end();
         game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
         hud.stage.draw();
+
+        if (gameOver()){
+            game.setScreen(new GameOverScreen(game));
+            dispose();
+        }
     }
 
     @Override
@@ -212,5 +222,12 @@ public class PlayScreen implements Screen {
         world.dispose();
         b2dr.dispose();
         hud.dispose();
+    }
+
+    public boolean gameOver() {
+        if (player.currentState == Mario.State.DEAD && player.getStateTime() > 3) {
+            return true;
+        }
+        return false;
     }
 }

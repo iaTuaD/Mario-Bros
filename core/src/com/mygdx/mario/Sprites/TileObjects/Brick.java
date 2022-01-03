@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.mygdx.mario.MarioBros;
 import com.mygdx.mario.Scenes.Hud;
 import com.mygdx.mario.Screens.PlayScreen;
+import com.mygdx.mario.Sprites.Mario;
 
 public class Brick extends InteractiveTileObject {
     public Brick(PlayScreen screen, MapObject object) {
@@ -16,11 +17,15 @@ public class Brick extends InteractiveTileObject {
     }
 
     @Override
-    public void onHeadHit() {
-        Gdx.app.debug("tai", "coll brick");
-        setCategoryFilter(MarioBros.DESTROYED_BIT);
-        getCell().setTile(null);
-        Hud.addScore(200);
-        MarioBros.manager.get("audio/sounds/breakblock.wav", Sound.class).play();
+    public void onHeadHit(Mario mario) {
+        if (mario.isBig()) {
+            Gdx.app.debug("tai", "coll brick");
+            setCategoryFilter(MarioBros.DESTROYED_BIT);
+            getCell().setTile(null);
+            Hud.addScore(200);
+            MarioBros.manager.get("audio/sounds/breakblock.wav", Sound.class).play();
+        }
+        MarioBros.manager.get("audio/sounds/bump.wav", Sound.class).play();
+
     }
 }
