@@ -11,7 +11,6 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.mario.MarioBros;
 import com.mygdx.mario.Screens.PlayScreen;
-import com.mygdx.mario.Sprites.Enemies.Enemy;
 
 public class Goomba extends Enemy {
     private float stateTime;
@@ -43,7 +42,7 @@ public class Goomba extends Enemy {
             setRegion(new TextureRegion(screen.getAtlas().findRegion("goomba"), 32, 0, 16, 16));
             stateTime = 0;
         } else if (!destroyed) {
-            b2Body.setLinearVelocity(veloccity);
+            b2Body.setLinearVelocity(velocity);
             setPosition(b2Body.getPosition().x - getWidth() / 2, b2Body.getPosition().y - getHeight() / 2);
             setRegion(walkAnimation.getKeyFrame(stateTime, true));
         }

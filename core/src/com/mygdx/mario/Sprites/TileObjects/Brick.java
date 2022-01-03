@@ -2,14 +2,15 @@ package com.mygdx.mario.Sprites.TileObjects;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.math.Rectangle;
 import com.mygdx.mario.MarioBros;
 import com.mygdx.mario.Scenes.Hud;
 import com.mygdx.mario.Screens.PlayScreen;
 
 public class Brick extends InteractiveTileObject {
-    public Brick(PlayScreen screen, Rectangle bounds) {
-        super(screen, bounds);
+    public Brick(PlayScreen screen, MapObject object) {
+        super(screen, object);
         fixture.setUserData(this);
         setCategoryFilter(MarioBros.BRICK_BIT);
     }
