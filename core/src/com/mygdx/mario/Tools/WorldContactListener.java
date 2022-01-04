@@ -21,15 +21,6 @@ public class WorldContactListener implements ContactListener {
 
         int cDef = fixA.getFilterData().categoryBits | fixB.getFilterData().categoryBits;
 
-//        if (fixA.getUserData() == "head" || fixB.getUserData() == "head") {
-//            Fixture head = fixA.getUserData() == "head" ? fixA : fixB;
-//            Fixture object = head == fixA ? fixB : fixA;
-//
-//            if (object.getUserData() != null
-//                    && InteractiveTileObject.class.isAssignableFrom(object.getUserData().getClass())) {
-//                ((InteractiveTileObject) object.getUserData()).onHeadHit();
-//            }
-//        }
         switch (cDef) {
             case MarioBros.MARIO_HEAD_BIT | MarioBros.BRICK_BIT:
             case MarioBros.MARIO_HEAD_BIT | MarioBros.COIN_BIT:
@@ -41,9 +32,9 @@ public class WorldContactListener implements ContactListener {
                 break;
             case MarioBros.ENEMY_HEAD_BIT | MarioBros.MARIO_BIT:
                 if (fixA.getFilterData().categoryBits == MarioBros.ENEMY_HEAD_BIT) {
-                    ((Enemy) fixA.getUserData()).hitOnHead();
+                    ((Enemy) fixA.getUserData()).hitOnHead((Mario) fixB.getUserData());
                 } else {
-                    ((Enemy) fixB.getUserData()).hitOnHead();
+                    ((Enemy) fixB.getUserData()).hitOnHead((Mario) fixA.getUserData());
                 }
                 break;
             case MarioBros.ENEMY_BIT | MarioBros.OBJECT_BIT:
@@ -56,9 +47,9 @@ public class WorldContactListener implements ContactListener {
             case MarioBros.MARIO_BIT | MarioBros.ENEMY_BIT:
                 Gdx.app.debug("mario", "die");
                 if (fixA.getFilterData().categoryBits == MarioBros.MARIO_BIT) {
-                    ((Mario) fixA.getUserData()).hit();
+                    ((Mario) fixA.getUserData()).hit((Enemy) fixB.getUserData());
                 }else {
-                    ((Mario) fixB.getUserData()).hit();
+                    ((Mario) fixB.getUserData()).hit((Enemy) fixA.getUserData());
                 }
                 break;
             case MarioBros.ENEMY_BIT | MarioBros.ENEMY_BIT:

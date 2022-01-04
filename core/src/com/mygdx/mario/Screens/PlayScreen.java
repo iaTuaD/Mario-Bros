@@ -106,7 +106,7 @@ public class PlayScreen implements Screen {
         world.step(1 / 60f, 6, 2);
 
         player.update(dt);
-        for (Enemy enemy : creator.getGoombas()) {
+        for (Enemy enemy : creator.getEnemy()) {
             enemy.update(dt);
             if (enemy.getX() < player.getX() + 224 / MarioBros.PPM) {
                 enemy.b2Body.setActive(true);
@@ -170,7 +170,7 @@ public class PlayScreen implements Screen {
         game.batch.setProjectionMatrix(gameCam.combined);
         game.batch.begin();
         player.draw(game.batch);
-        for (Enemy enemy : creator.getGoombas()) {
+        for (Enemy enemy : creator.getEnemy()) {
             enemy.draw(game.batch);
         }
         for (Item item : items) {
